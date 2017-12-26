@@ -3,11 +3,14 @@
 #include <File.au3>
 #include <Misc.au3>
 #include <Array.au3>
+#Include "Json.au3"
+#Include "Curl.au3"
+#Include "Request.au3"
 
 Opt("WinTitleMatchMode", 2) ;1=start, 2=subStr, 3=exact, 4=advanced, -1 to -4=Nocase
 
-; Ссылка на текст, содержащий сектор и индустрии компании
-Global Const $yqlAPICompanySectorRequest = "http://www.stock-watcher.com/quote/<SYMBOL>"
+; Ссылка для получения JSON с информацией по тикеру
+Global Const $reqUrl = "https://finance.google.com/finance?q=<SYMBOL>&output=json"
 
 ; регистрация нажатия ESC для выхода из программы
 HotKeySet("{ESC}", "Terminate")
@@ -109,25 +112,31 @@ EndFunc
 ; Получение инфо о компании по тикеру
 Func GetCompanyInfo($sSymbol)
 
-	; Получение информации о секторе и индустрии компании
+   $sRequest = StringReplace($reqUrl, "<SYMBOL>", $sSymbol)
 
-	$sRequest = StringReplace($yqlAPICompanySectorRequest, "<SYMBOL>", $sSymbol)
-	; ConsoleWrite($sRequest & @CRLF)
-	$bData = InetRead($sRequest)
+   ; выполнение запроса (используется Curl.au3)
+   Local $Data = Request('{url: "' & $sRequest & '"}')
+   ; убираем лишние символы
+   Local $jsonData = StringMid($Data, 6, StringLen($Data) - 1)
+   ; получение json-объекта
+   Local $Obj = Json_Decode($jsonData)
 
-	$aLines = BinaryToString($bData, 4)
-	; ConsoleWrite("$aLines-bs" & $aLines & @CRLF)
+   Local $stock_exchange = Json_Get($Obj, '["e"]')
+   Local $stock_name = Json_Get($Obj, '["name"]')
+   Local $stock_sector = Json_Get($Obj, '["sname"]')
+   Local $_stock_industry = Json_Get($Obj, '["iname"]')
+   Local $strLen = StringLen($_stock_industry)
+   ; убираем лишние символы
+   Local $stock_industry = StringReplace ($_stock_industry, " - NEC", "", $strLen - 6)
 
-	$array = StringRegExp($aLines, 'Quote-fulname">\n.*>(.*), (.*)<\/b><br>(.*)<\/div', 1, 1)
-	If @error = 0 then
-		; ConsoleWrite ("0: " & $array[0] & @CRLF)
-		; ConsoleWrite ("1: " & $array[1] & @CRLF)
-	    ; ConsoleWrite ("2: " & $array[2] & @CRLF)
-		$sCompanyInfo = $array[0] & @CRLF & $array[1] & $array[2]
-	Else
-	    $sCompanyInfo = "N/A"
-	EndIf
+   ;ConsoleWrite($jsonData & @CRLF)
+   ;ConsoleWrite("Exch: " & $stock_exchange & @CRLF)
+   ;ConsoleWrite("Name: " & $stock_name & @CRLF)
+   ;ConsoleWrite("Sector: " & $stock_sector & @CRLF)
+   ;ConsoleWrite("Industry: " & $stock_industry & @CRLF)
 
-	Return $sCompanyInfo
+   Local $sCompanyInfo = $stock_name & ', ' & $stock_exchange & @CRLF & $stock_sector & ', ' & $_stock_industry
+
+   Return $sCompanyInfo
 
 EndFunc
