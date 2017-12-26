@@ -135,7 +135,7 @@ Func GetCompanyInfo($sSymbol)
    ;ConsoleWrite("Sector: " & $stock_sector & @CRLF)
    ;ConsoleWrite("Industry: " & $stock_industry & @CRLF)
 
-   Local $sCompanyInfo = $stock_name & ', ' & $stock_exchange & @CRLF & $stock_sector & ', ' & $_stock_industry
+   Local $sCompanyInfo = $stock_name & ', ' & $stock_exchange & @CRLF & $stock_sector & ', ' & $stock_industry
 
    Return $sCompanyInfo
 
