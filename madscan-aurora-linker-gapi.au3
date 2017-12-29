@@ -61,7 +61,7 @@ While 1
 
 		If $Ticker <> $prevTicker Then
 
-			; Активируем окно Level2 в Arche
+			; Активируем окно Level2 в Aurora
 			_WinWaitActivate("Level2", "")
 			Local $hLeveII = ControlGetHandle("Level2", "", "[CLASS:Edit; INSTANCE:1]")
 
@@ -117,7 +117,9 @@ Func GetCompanyInfo($sSymbol)
    ; выполнение запроса (используется Curl.au3)
    Local $Data = Request('{url: "' & $sRequest & '"}')
    ; убираем лишние символы
-   Local $jsonData = StringMid($Data, 6, StringLen($Data) - 1)
+   If StringInStr($Data, "// [") Then
+	  Local $jsonData = StringMid($Data, 6, StringLen($Data) - 1)
+   EndIf
    ; получение json-объекта
    Local $Obj = Json_Decode($jsonData)
 
