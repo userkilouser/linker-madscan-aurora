@@ -116,9 +116,12 @@ Func GetCompanyInfo($sSymbol)
 
    ; выполнение запроса (используется Curl.au3)
    Local $Data = Request('{url: "' & $sRequest & '"}')
+   Local $jsonData = ""
    ; убираем лишние символы
    If StringInStr($Data, "// [") Then
-	  Local $jsonData = StringMid($Data, 6, StringLen($Data) - 1)
+	  $jsonData = StringMid($Data, 6, StringLen($Data) - 1)
+   Else
+	  $jsonData = $Data
    EndIf
    ; получение json-объекта
    Local $Obj = Json_Decode($jsonData)
