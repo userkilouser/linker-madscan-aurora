@@ -64,15 +64,15 @@ While 1
 			; Активируем окно Level2 в Aurora
 			_WinWaitActivate("Level2", "")
 			Local $hLeveII = ControlGetHandle("Level2", "", "[CLASS:Edit; INSTANCE:1]")
-
+			; Послылаем значение тикера в соответствующее поле на форме Level2 целиком
+			ControlSend ("", "", $hLeveII, $Ticker & "{ENTER}", 0)
 			; Послылаем значение тикера в соответствующее поле на форме Level2, по буквам, т.к. в Aurora - выпадающий список тикеров
-			; ControlSend ("", "", $hLeveII, $Ticker & "{ENTER}", 0)
-			If $TickerArray <> 0 Then
-				For $element In $TickerArray
-				Send($element)
-				Next
-				Send( "{ENTER}")
-			EndIf
+;~ 			If $TickerArray <> 0 Then
+;~ 				For $element In $TickerArray
+;~ 				Send($element)
+;~ 				Next
+;~ 				Send("{ENTER}")
+;~ 			EndIf
 
 		EndIf
 
