@@ -64,6 +64,8 @@ While 1
 			; Активируем окно Level2 в Aurora
 			_WinWaitActivate("Level2", "")
 			Local $hLeveII = ControlGetHandle("Level2", "", "[CLASS:Edit; INSTANCE:1]")
+			; Кликаем,чтобы снять фокус с [Send]
+			ControlClick ("", "", $hLeveII)
 			; Послылаем значение тикера в соответствующее поле на форме Level2 целиком
 			ControlSend ("", "", $hLeveII, $Ticker & "{ENTER}", 0)
 			; Послылаем значение тикера в соответствующее поле на форме Level2, по буквам, т.к. в Aurora - выпадающий список тикеров
